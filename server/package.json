@@ -1,0 +1,10 @@
+{
+  "name": "sunset-bay-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Realtime server for Sunset Bay: players, shared building, text chat, Postgres persistence",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "pg": "^8.11.3", "ws": "^8.17.0" }
+}
