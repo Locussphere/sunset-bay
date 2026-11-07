@@ -178,6 +178,29 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
 .lgerr{min-height:1.2em;font-size:13px;font-weight:800;color:#ff8d9b}
 #lgCodeTxt{margin:0;padding:10px;border-radius:10px;background:rgba(0,0,0,.3);font:700 15px/1.4 ui-monospace,Consolas,monospace;word-break:break-all;-webkit-user-select:all;user-select:all;color:var(--butter)}
 .lgoff{background:none;border:0;color:var(--dim);font:700 12px var(--body);text-decoration:underline;cursor:pointer;align-self:center;padding:4px}
+
+[hidden]{display:none!important}
+.btn[hidden]{display:none}.un{display:inline-block;margin-left:6px;background:#ff8d6b;color:#2a1b3d;border-radius:99px;padding:0 7px;font:900 11px/17px var(--body)}.un[hidden]{display:none}
+#friends{position:absolute;right:max(8px,var(--gr));top:8px;bottom:8px;width:min(330px,46vw);z-index:6;display:flex;flex-direction:column;gap:8px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:12px;overflow:hidden}
+#friends[hidden],#frThread[hidden]{display:none}
+#friends h2{margin:0;font:600 24px/1.1 var(--display);color:var(--butter)}
+.frtabs,.lgtabs{display:flex;gap:6px}
+.frtabs button,.lgtabs button{flex:1;font:800 12px var(--body);color:var(--dim);background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:99px;padding:6px 8px;cursor:pointer}
+.frtabs button.on,.lgtabs button.on{background:var(--butter);color:#2a1b3d;border-color:var(--butter)}
+#frBody{flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px}
+#frThread{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0}
+.frth{display:flex;align-items:center;gap:8px}.frth b{flex:1;font:800 15px var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#frMsgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:5px;min-height:70px;padding:2px}
+.fm{max-width:86%;padding:6px 10px;border-radius:12px;font:600 13px/1.35 var(--body);word-break:break-word}
+.fm.me{align-self:flex-end;background:#f6b98b;color:#2a1b3d}.fm.th{align-self:flex-start;background:rgba(255,255,255,.13)}
+.frsend{display:flex;gap:6px}.frsend input,#frBody input{flex:1;min-width:0;font:700 14px var(--body);padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--ink);-webkit-user-select:text;user-select:text}
+.frsend .primary{width:auto;padding:8px 14px}
+.frrow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.07);font:800 14px var(--body)}
+.frrow.go{cursor:pointer}.frrow .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:9px;height:9px;border-radius:50%;background:#6b5a82;flex:none}.dot.on{background:#9be3c1}
+.frhint{font:600 12px/1.4 var(--body);color:var(--dim);padding:2px 2px}
+.frrow .bb{padding:3px 10px;font-size:12px}
+.lgcol{display:flex;flex-direction:column;gap:8px}.lgcol input{width:100%}.lgtabs{margin-bottom:2px}
 #netlog{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,92vw);max-height:70vh;display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;z-index:12}
 #netlog[hidden]{display:none}.nlh{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:13px}.nlh .bb{margin-left:6px;padding:3px 10px;font-size:11px}
 #nlpre{margin:0;overflow:auto;max-height:55vh;font:600 11px/1.45 ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-all;-webkit-user-select:text;user-select:text;background:rgba(0,0,0,.25);border-radius:8px;padding:8px}
@@ -213,6 +236,7 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
     <button class="btn" id="bHelp" type="button">Help<kbd>H</kbd></button>
     <button class="btn" id="bStyle" type="button">Style<kbd>V</kbd></button>
     <button class="btn" id="bBuild" type="button">Build<kbd>Q</kbd></button>
+    <button class="btn" id="bFriends" type="button" hidden>Friends<kbd>G</kbd><span id="frBadge" class="un" hidden></span></button>
     <button class="btn" id="bFs" type="button">Fullscreen<kbd>F</kbd></button>
   </div>
 </div>
@@ -223,9 +247,28 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
   <p id="lgMsg"></p>
   <div id="lgChoose">
     <div id="lgGoogle" hidden><div id="gbtn"></div><div class="lgor">or</div></div>
-    <label for="lgName">Play as a guest</label>
-    <div class="lgrow"><input id="lgName" maxlength="12" placeholder="Choose a name" autocomplete="off" autocapitalize="words"><button type="button" class="primary" id="lgGo" style="width:auto;padding:9px 16px">Play</button></div>
-    <details><summary>I already have a recovery code</summary><div class="lgrow"><input id="lgCode" placeholder="Paste your code" autocomplete="off"><button type="button" class="bb" id="lgCodeGo">Sign in</button></div></details>
+    <div class="lgtabs"><button type="button" class="on" id="lgTabIn">Sign in</button><button type="button" id="lgTabUp">Create account</button></div>
+    <div class="lgcol" id="lgIn">
+      <input id="lgInName" maxlength="12" placeholder="Your name" autocomplete="username" autocapitalize="off">
+      <input id="lgInPw" type="password" maxlength="64" placeholder="Password" autocomplete="current-password">
+      <button type="button" class="primary" id="lgInGo">Sign in</button>
+    </div>
+    <div class="lgcol" id="lgUp" hidden>
+      <input id="lgUpName" maxlength="12" placeholder="Choose a name (2 to 12)" autocomplete="username" autocapitalize="words">
+      <input id="lgUpPw" type="password" maxlength="64" placeholder="Choose a password (6 or more)" autocomplete="new-password">
+      <button type="button" class="primary" id="lgUpGo">Create account</button>
+    </div>
+    <details><summary>Other ways to play</summary>
+      <label for="lgCode" style="display:block;margin-top:8px">Recovery code</label>
+      <div class="lgrow"><input id="lgCode" placeholder="Paste your code" autocomplete="off"><button type="button" class="bb" id="lgCodeGo">Sign in</button></div>
+      <label for="lgName" style="display:block;margin-top:8px">Quick guest (no password)</label>
+      <div class="lgrow"><input id="lgName" maxlength="12" placeholder="Choose a name" autocomplete="off" autocapitalize="words"><button type="button" class="bb" id="lgGo">Play</button></div>
+    </details>
+  </div>
+  <div id="lgSetPw" hidden class="lgcol">
+    <input id="lgOldPw" type="password" maxlength="64" placeholder="Current password" autocomplete="current-password" hidden>
+    <input id="lgNewPw" type="password" maxlength="64" placeholder="New password (6 or more)" autocomplete="new-password">
+    <div class="lgrow"><button type="button" class="primary" id="lgPwSave" style="width:auto;padding:9px 16px">Save password</button><button type="button" class="bb" id="lgPwCancel">Cancel</button></div>
   </div>
   <div id="lgSetName" hidden>
     <label for="lgName2">Your name in the game</label>
@@ -318,6 +361,17 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
   <h2>Your look</h2>
   <div id="lookBody"></div>
   <div class="lookbtns"><button type="button" class="bb" id="lookRand">Randomise</button><button type="button" class="bb pl" id="lookDone" style="display:inline-block">Done</button></div>
+</div>
+
+<div id="friends" hidden>
+  <h2>Friends</h2>
+  <div class="frtabs"><button type="button" class="on" data-ft="list">Friends</button><button type="button" data-ft="req">Requests<span id="frReqN" class="un" hidden></span></button><button type="button" data-ft="add">Add</button></div>
+  <div id="frBody"></div>
+  <div id="frThread" hidden>
+    <div class="frth"><button type="button" class="bb" id="frBack">Back</button><b id="frWith"></b><button type="button" class="bb" id="frRemove">Remove</button></div>
+    <div id="frMsgs"></div>
+    <div class="frsend"><input id="frIn" maxlength="200" placeholder="Message" autocomplete="off"><button type="button" class="primary" id="frSend">Send</button></div>
+  </div>
 </div>
 
 <div id="help" class="modal" hidden>
@@ -2201,7 +2255,7 @@ function chipRow(key,list,cur){
   var h='<div class="sws">';list.forEach(function(o){h+='<button type="button" class="bb'+(cur===o[0]?' on':'')+'" data-k="'+key+'" data-v="'+o[0]+'">'+o[1]+'</button>'});return h+'</div>';
 }
 function renderLook(){
-  var h=net.acc?'<h3>Name</h3><div class="sws"><b>'+LOOK.name.replace(/[<>&"]/g,'')+'</b><button type="button" class="bb" id="lookRename">Change</button>'+(acct.kind==='guest'?'<button type="button" class="bb" id="lookCode">Recovery code</button>':'')+'<button type="button" class="bb" id="lookOut">Sign out</button></div>':'<h3>Name</h3><input id="lookName" type="text" maxlength="12" autocomplete="off" placeholder="Your name" value="'+LOOK.name.replace(/"/g,'')+'">';
+  var h=net.acc?'<h3>Name</h3><div class="sws"><b>'+LOOK.name.replace(/[<>&"]/g,'')+'</b><button type="button" class="bb" id="lookRename">Change</button><button type="button" class="bb" id="lookPw">'+(acct.hasPw?'Change password':'Set password')+'</button>'+(acct.kind==='guest'?'<button type="button" class="bb" id="lookCode">Recovery code</button>':'')+'<button type="button" class="bb" id="lookOut">Sign out</button></div>':'<h3>Name</h3><input id="lookName" type="text" maxlength="12" autocomplete="off" placeholder="Your name" value="'+LOOK.name.replace(/"/g,'')+'">';
   h+='<h3>Skin</h3>'+swRow('skin',SKINS,LOOK.skin);
   h+='<h3>Hair style</h3>'+chipRow('hairStyle',HAIRS,LOOK.hairStyle);
   h+='<h3>Hair colour</h3>'+swRow('hair',HAIRC,LOOK.hair);
@@ -2225,7 +2279,7 @@ function openLook(){closePanels();$('look').hidden=false;renderLook()}
 function initLook(){
   $('look').addEventListener('click',function(e){
     var b=e.target.closest('[data-k]');if(b){lookSet(b.dataset.k,b.dataset.v);return}
-    var id=e.target.id;if(id==='lookRename')netRename();else if(id==='lookOut')netSignOut();else if(id==='lookCode')netShowCode();
+    var id=e.target.id;if(id==='lookRename')netRename();else if(id==='lookOut')netSignOut();else if(id==='lookCode')netShowCode();else if(id==='lookPw')netSetPw();
   });
   $('look').addEventListener('input',function(e){if(e.target.id==='lookName'){LOOK.name=e.target.value.replace(/[<>]/g,'').slice(0,12);clearTimeout(lookSet.t);lookSet.t=setTimeout(function(){applyLook();saveSoon()},350)}});
   $('lookRand').addEventListener('click',lookRandom);$('lookDone').addEventListener('click',closePanels);
@@ -2421,7 +2475,7 @@ addEventListener('keydown',function(e){
   if(c==='KeyE')doInteract();
   else if(c==='KeyB')togglePanel('bag');else if(c==='KeyC')togglePanel('craft');else if(c==='KeyM')togglePanel('map');else if(c==='KeyH')togglePanel('help');
   else if(c==='Escape')closePanels();
-  else if(c==='KeyV')togglePanel('look');else if(c==='Enter')openChat();else if(c==='KeyR')gridRotate();else if(c==='KeyF')toggleFs();
+  else if(c==='KeyV')togglePanel('look');else if(c==='KeyG'&&net.acc)togglePanel('friends');else if(c==='Enter')openChat();else if(c==='KeyR')gridRotate();else if(c==='KeyF')toggleFs();
   else if(c==='KeyX'&&!panelOpen())gridRemoveAtCursor();
   else if(/^Digit[1-9]$/.test(c))selectSlot(+c.slice(5)-1);
 });
@@ -2480,7 +2534,7 @@ function updateCamera(dt){
 }
 
 /* ===== UI: HUD, panels, icons, shop ===== */
-var PANELS=['bag','craft','shop','map','help','look'],craftStation='hand',craftSel=null,bagSel=null,shopTab='buy';
+var PANELS=['bag','craft','shop','map','help','look','friends'],craftStation='hand',craftSel=null,bagSel=null,shopTab='buy';
 function panelOpen(){for(var i=0;i<PANELS.length;i++)if(!$(PANELS[i]).hidden)return true;return false}
 function closePanels(){PANELS.forEach(function(p){$(p).hidden=true});resetArmed=false;$('resetBtn').textContent='Reset progress'}
 function togglePanel(name){
@@ -2488,6 +2542,7 @@ function togglePanel(name){
   if(open)return;
   if(name==='craft'){openCraft('hand');return}
   if(name==='look'){openLook();return}
+  if(name==='friends'){if(!net.acc){toast('Sign in to use friends.');return}$(name).hidden=false;frOpenPanel();return}
   $(name).hidden=false;
   if(name==='bag')renderBag();if(name==='map')drawMap($('bigmap').getContext('2d'),640,true);
 }
@@ -2672,7 +2727,7 @@ function drawMap(ctx,S,big,mini){
 
 /* ---- wiring ---- */
 function initUI(){
-  initLook();initNet();
+  initLook();initNet();$('bFriends').addEventListener('click',function(){togglePanel('friends')});
   document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closePanels)});
   document.querySelectorAll('.modal').forEach(function(m){m.addEventListener('pointerdown',function(e){if(e.target===m)closePanels()})});
   $('bBag').addEventListener('click',function(){togglePanel('bag')});$('bCraft').addEventListener('click',function(){togglePanel('craft')});
@@ -2800,28 +2855,34 @@ function netLogInit(){
   function selLog(){var r=document.createRange();r.selectNodeContents($('nlpre'));var q=getSelection();q.removeAllRanges();q.addRange(r);toast('Log selected: copy it')}
 }
 /* ---- accounts: unique names. Google sign-in (if the server has it) or a guest name with a recovery code ---- */
-var acct={cfg:null,tok:'',kind:''};
+var acct={cfg:null,tok:'',kind:'',hasPw:false,mode:''};
 function httpBase(){return net.url.replace(/^ws/,'http')}
 function apiPost(path,body){
   return fetch(httpBase()+path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json()});
 }
 function lgShow(view,msg,title){
   $('login').hidden=false;
-  $('lgChoose').hidden=view!=='choose';$('lgSetName').hidden=view!=='name';$('lgCodeView').hidden=view!=='code';
-  $('lgTitle').textContent=title||(view==='code'?'Save your recovery code':view==='name'?'Pick your name':'Play online');
-  $('lgMsg').textContent=view==='choose'?'Everyone has one unique name that nobody else can take.':view==='name'?'This is the name other players will see.':'It is the only way to get this name back on another phone or computer, or if this browser is cleared.';
+  $('lgChoose').hidden=view!=='choose';$('lgSetName').hidden=view!=='name';$('lgCodeView').hidden=view!=='code';$('lgSetPw').hidden=view!=='setpw';
+  $('lgTitle').textContent=title||(view==='code'?'Save your recovery code':view==='name'?'Pick your name':view==='setpw'?(acct.hasPw?'Change your password':'Set a password'):'Play online');
+  $('lgMsg').textContent=view==='choose'?'Everyone has one unique name that nobody else can take.':view==='name'?'This is the name other players will see.':view==='setpw'?'You will use this with your name to sign in on any device. Other devices will need to sign in again.':'If you ever forget your password, this code gets you back in. Keep it somewhere safe.';
   $('lgErr').textContent=msg||'';
-  $('lgOff').hidden=view==='code';
-  var f=view==='choose'?$('lgName'):view==='name'?$('lgName2'):null;if(f)setTimeout(function(){try{f.focus()}catch(e){}},50);
+  $('lgOff').hidden=view!=='choose';
+  $('lgOldPw').hidden=!(view==='setpw'&&acct.hasPw);
+  var f=view==='choose'?($('lgUp').hidden?$('lgInName'):$('lgUpName')):view==='name'?$('lgName2'):view==='setpw'?($('lgOldPw').hidden?$('lgNewPw'):$('lgOldPw')):null;
+  if(f)setTimeout(function(){try{f.focus()}catch(e){}},50);
 }
-function lgBusy(on){['lgGo','lgCodeGo','lgName2Go','lgOff'].forEach(function(i){$(i).disabled=on})}
-function lgSaveTok(r){acct.tok=r.token;acct.kind=r.kind||'';try{localStorage.setItem('sunsetbay.tok',r.token)}catch(e){}}
+function lgTab(which){
+  var up=which==='up';$('lgIn').hidden=up;$('lgUp').hidden=!up;$('lgTabIn').classList.toggle('on',!up);$('lgTabUp').classList.toggle('on',up);$('lgErr').textContent='';
+}
+function lgBusy(on){['lgGo','lgCodeGo','lgName2Go','lgOff','lgInGo','lgUpGo','lgPwSave'].forEach(function(i){$(i).disabled=on})}
+function lgSaveTok(r){acct.tok=r.token;acct.kind=r.kind||'';if(r.hasPw!==undefined)acct.hasPw=!!r.hasPw;try{localStorage.setItem('sunsetbay.tok',r.token)}catch(e){}}
 function lgDone(){$('login').hidden=true;if(acct.after)acct.after()}
 function lgAnswer(r){
   lgBusy(false);
-  if(!r||!r.ok){lgShow($('lgSetName').hidden?'choose':'name',(r&&r.err)||'Something went wrong');netLog('login: '+((r&&r.err)||'failed'));return}
+  if(!r||!r.ok){lgShow(acct.mode==='setpw'?'setpw':$('lgSetName').hidden?'choose':'name',(r&&r.err)||'Something went wrong');netLog('login: '+((r&&r.err)||'failed'));return}
   lgSaveTok(r);
-  if(r.created){netLog('guest account created: '+r.name);$('lgCodeTxt').textContent=r.token;lgShow('code','');return}
+  if(acct.mode==='setpw'){acct.mode='';$('login').hidden=true;$('lgNewPw').value='';$('lgOldPw').value='';toast('Password saved');netLog('password set');if(!$('look').hidden)renderLook();return}
+  if(r.created){netLog('account created: '+r.name);$('lgCodeTxt').textContent=r.token;lgShow('code','');return}
   if(r.needName){lgShow('name','',null);if(r.suggest)$('lgName2').value=r.suggest;return}
   netLog('signed in as '+r.name);lgDone();
 }
@@ -2848,7 +2909,7 @@ function netAuth(after){
     if(!tok){netStatus('wait','Sign in');lgShow('choose');loadGoogle();return}
     (function resume(){
       apiPost('/api/login',{kind:'resume',token:tok}).then(function(r){
-        if(r.ok){lgSaveTok({token:tok,kind:r.kind});if(r.needName){lgShow('name');return}netLog('signed in as '+r.name);after();return}
+        if(r.ok){lgSaveTok({token:tok,kind:r.kind,hasPw:r.hasPw});if(r.needName){lgShow('name');return}netLog('signed in as '+r.name);after();return}
         if(r.banned){netStatus('off','Account banned');lgShow('choose',r.err);return}
         try{localStorage.removeItem('sunsetbay.tok')}catch(e){}netLog('saved sign-in no longer valid');netStatus('wait','Sign in');lgShow('choose',r.err);loadGoogle();
       }).catch(function(){netLog('sign-in check failed, retrying');setTimeout(resume,2500)});
@@ -2857,12 +2918,20 @@ function netAuth(after){
   cfg();
 }
 function netAuthInit(){
-  $('lgGo').addEventListener('click',function(){lgSend({kind:'guest',name:$('lgName').value})});
-  $('lgName').addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();lgSend({kind:'guest',name:$('lgName').value})}});
+  function enter(id,fn){$(id).addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();fn()}})}
+  function doIn(){lgSend({kind:'password',name:$('lgInName').value,password:$('lgInPw').value})}
+  function doUp(){lgSend({kind:'signup',name:$('lgUpName').value,password:$('lgUpPw').value})}
+  function doGuest(){lgSend({kind:'guest',name:$('lgName').value})}
+  function doName2(){lgSend({kind:'setname',token:acct.tok,name:$('lgName2').value})}
+  function doPw(){lgSend({kind:'setpw',token:acct.tok,old:$('lgOldPw').value,password:$('lgNewPw').value})}
+  $('lgTabIn').addEventListener('click',function(){lgTab('in');$('lgInName').focus()});
+  $('lgTabUp').addEventListener('click',function(){lgTab('up');$('lgUpName').focus()});
+  $('lgInGo').addEventListener('click',doIn);$('lgUpGo').addEventListener('click',doUp);$('lgGo').addEventListener('click',doGuest);$('lgName2Go').addEventListener('click',doName2);$('lgPwSave').addEventListener('click',doPw);
+  enter('lgInName',function(){$('lgInPw').focus()});enter('lgInPw',doIn);enter('lgUpName',function(){$('lgUpPw').focus()});enter('lgUpPw',doUp);
+  enter('lgName',doGuest);enter('lgName2',doName2);enter('lgOldPw',function(){$('lgNewPw').focus()});enter('lgNewPw',doPw);
   $('lgCodeGo').addEventListener('click',function(){var c=$('lgCode').value.trim();if(c)lgSend({kind:'resume',token:c})});
-  $('lgCode').addEventListener('keydown',function(e){e.stopPropagation()});
-  $('lgName2Go').addEventListener('click',function(){lgSend({kind:'setname',token:acct.tok,name:$('lgName2').value})});
-  $('lgName2').addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();lgSend({kind:'setname',token:acct.tok,name:$('lgName2').value})}});
+  $('lgCode').addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();var c=$('lgCode').value.trim();if(c)lgSend({kind:'resume',token:c})}});
+  $('lgPwCancel').addEventListener('click',function(){acct.mode='';$('login').hidden=true});
   $('lgCodeOk').addEventListener('click',lgDone);
   $('lgCodeCopy').addEventListener('click',function(){
     var t=$('lgCodeTxt').textContent;
@@ -2871,6 +2940,7 @@ function netAuthInit(){
   });
   $('lgOff').addEventListener('click',function(){$('login').hidden=true;net.off=true;netStatus('off','Offline');netLog('playing offline')});
 }
+function netSetPw(){acct.mode='setpw';lgBusy(false);lgShow('setpw')}
 function netRename(){
   var n=prompt('New name (2 to 12 letters, numbers or spaces)',LOOK.name);if(n&&n.trim())netSend({t:'rename',name:n.trim()});
 }
@@ -2905,7 +2975,7 @@ function netConnect(){
 }
 /* the one place a connection is declared lost (closed by the browser, by the server, or by the watchdog) */
 function netGone(code,why){
-  var was=net.joined;net.joined=false;net.on=false;net.ws=null;net.lastCode=code||0;netClearRemotes();
+  frShow(0);var was=net.joined;net.joined=false;net.on=false;net.ws=null;net.lastCode=code||0;netClearRemotes();
   netLog('closed code='+(code||'?')+(why?' '+why:'')+(was?' (was online)':''));
   if(code===4000){netStatus('off','Opened in another tab');netLog('another tab took over, not retrying');return}
   if(code===4401){netLog('server did not accept the sign-in');try{localStorage.removeItem('sunsetbay.tok')}catch(e){}acct.tok='';netAuth(netConnect);return}
@@ -2961,11 +3031,13 @@ function netHandle(m){
     case'kicked':net.kickWhy=m.why||'';netLog('server: '+(m.why||'replaced by a newer tab'));break;
     case'name':if(m.name){LOOK.name=m.name;applyLook();if(!$('look').hidden)renderLook();saveSoon();toast('Your name is '+m.name)}break;
     case'err':toast(m.msg||'Something went wrong');break;
+    case'info':toast(m.msg||'');break;
+    case'fr_list':case'fr_on':case'dm':case'dm_hist':frHandle(m);break;
   }
 }
 function netInit(m){
   if(!LOOK.name&&m.name){net.guest=m.name;try{localStorage.setItem('sunsetbay.guest',m.name)}catch(e){}}
-  net.acc=m.acc?1:0;
+  net.acc=m.acc?1:0;acct.hasPw=!!m.pw;frShow(1);
   net.id=m.id;net.joined=true;net.on=true;net.tries=0;net.lastCode=0;net.n=m.players.length+1;
   netStatus('on','Online · '+net.n);
   netClearRemotes();
@@ -3085,6 +3157,7 @@ function sendChat(){
 function initNet(){
   $('bChat').addEventListener('click',openChat);$('chatSend').addEventListener('click',sendChat);$('chatX').addEventListener('click',closeChat);
   $('chatin').addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();sendChat()}else if(e.key==='Escape'){closeChat()}});
+  try{frInit()}catch(e){}
 }
 /* minimap dots */
 function drawRemotes(ctx,S,mode){
@@ -3094,6 +3167,88 @@ function drawRemotes(ctx,S,mode){
     else{var p=mapXY(r.tx,r.tz,S);x=p[0];y=p[1]}
     ctx.fillStyle='#9be3c1';ctx.strokeStyle='#2a1b3d';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,mode==='mini'?5:6,0,TAU);ctx.fill();ctx.stroke();
   }
+}
+
+/* ---- friends: requests, online list and private chat (only friends can message each other) ---- */
+var FR={friends:[],req:[],tab:'list',with:null,msgs:{}};
+function frEl(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function frShow(on){
+  var show=on===undefined?!!(net.joined&&net.acc):!!on&&!!net.acc;
+  $('bFriends').hidden=!show;if(!show&&!$('friends').hidden)$('friends').hidden=true;
+}
+function frFind(id){for(var i=0;i<FR.friends.length;i++)if(FR.friends[i].id===id)return FR.friends[i];return null}
+function frCounts(){
+  var un=0;FR.friends.forEach(function(f){un+=f.un||0});var n=un+FR.req.length;
+  $('frBadge').hidden=!n;$('frBadge').textContent=n;
+  $('frReqN').hidden=!FR.req.length;$('frReqN').textContent=FR.req.length;
+}
+function frHandle(m){
+  if(m.t==='fr_list'){FR.friends=m.friends||[];FR.req=m.req||[];if(FR.with&&!frFind(FR.with))FR.with=null;frCounts();frRender();return}
+  if(m.t==='fr_on'){var f=frFind(m.id);if(f){f.on=m.on?1:0;frRender()}return}
+  if(m.t==='dm_hist'){FR.msgs[m.with]=m.msgs||[];var g=frFind(m.with);if(g)g.un=0;frCounts();frRender();return}
+  if(m.t==='dm'){
+    var list=FR.msgs[m.with]||(FR.msgs[m.with]=[]);list.push({mine:m.mine,x:m.x,ts:m.ts});if(list.length>60)list.shift();
+    var fr=frFind(m.with),viewing=!$('friends').hidden&&FR.with===m.with;
+    if(!m.mine){
+      if(viewing)netSend({t:'dm_read',with:m.with});
+      else{if(fr)fr.un=(fr.un||0)+1;toast((m.name||'A friend')+': '+(m.x.length>40?m.x.slice(0,40)+'…':m.x))}
+    }
+    frCounts();frRender();
+  }
+}
+function frOpenPanel(){FR.tab='list';FR.with=null;frRender()}
+function frOpenThread(id){FR.with=id;if(!FR.msgs[id])FR.msgs[id]=[];netSend({t:'dm_hist',with:id});frRender();setTimeout(function(){try{$('frIn').focus()}catch(e){}},50)}
+function frRender(){
+  if($('friends').hidden)return;
+  var th=!!FR.with&&!!frFind(FR.with);
+  $('frThread').hidden=!th;$('frBody').hidden=th;document.querySelector('#friends .frtabs').hidden=th;
+  var tabs=document.querySelectorAll('#friends .frtabs button');for(var i=0;i<tabs.length;i++)tabs[i].classList.toggle('on',tabs[i].dataset.ft===FR.tab);
+  if(th){
+    var f=frFind(FR.with);$('frWith').textContent=f.name+(f.on?'':' (offline)');
+    var box=$('frMsgs');box.textContent='';
+    (FR.msgs[FR.with]||[]).forEach(function(x){box.appendChild(frEl('div','fm '+(x.mine?'me':'th'),x.x))});
+    if(!(FR.msgs[FR.with]||[]).length)box.appendChild(frEl('div','frhint','Say hi! Only you and '+f.name+' can see this chat.'));
+    box.scrollTop=box.scrollHeight;return;
+  }
+  var body=$('frBody');body.textContent='';
+  if(FR.tab==='list'){
+    if(!FR.friends.length)body.appendChild(frEl('div','frhint','No friends yet. Open the Add tab, type a player name and send a request.'));
+    FR.friends.slice().sort(function(a,b){return (b.on-a.on)||a.name.localeCompare(b.name)}).forEach(function(f){
+      var r=frEl('div','frrow go');r.appendChild(frEl('span','dot'+(f.on?' on':'')));r.appendChild(frEl('span','nm',f.name));
+      if(f.un)r.appendChild(frEl('span','un',f.un));r.addEventListener('click',function(){frOpenThread(f.id)});body.appendChild(r);
+    });
+  }else if(FR.tab==='req'){
+    if(!FR.req.length)body.appendChild(frEl('div','frhint','No friend requests right now.'));
+    FR.req.forEach(function(q){
+      var r=frEl('div','frrow');r.appendChild(frEl('span','nm',q.name));
+      var ok=frEl('button','bb','Accept');ok.type='button';ok.addEventListener('click',function(){netSend({t:'fr_acc',id:q.id})});
+      var no=frEl('button','bb','Decline');no.type='button';no.addEventListener('click',function(){netSend({t:'fr_dec',id:q.id})});
+      r.appendChild(ok);r.appendChild(no);body.appendChild(r);
+    });
+  }else{
+    var row=frEl('div','frsend');var inp=frEl('input');inp.id='frAddIn';inp.placeholder='Player name';inp.maxLength=12;inp.autocomplete='off';
+    var go=frEl('button','primary','Send');go.type='button';
+    function send(nm){nm=(nm||'').trim();if(nm){netSend({t:'fr_add',name:nm});inp.value=''}}
+    go.addEventListener('click',function(){send(inp.value)});
+    inp.addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();send(inp.value)}});
+    row.appendChild(inp);row.appendChild(go);body.appendChild(row);
+    body.appendChild(frEl('div','frhint','Online now'));
+    var mine={};FR.friends.forEach(function(f){mine[f.name.toLowerCase()]=1});var n=0;
+    for(var id in RP){var nm=RP[id].name;if(!nm||mine[nm.toLowerCase()]||nm===LOOK.name)continue;n++;
+      (function(nm){var r=frEl('div','frrow');r.appendChild(frEl('span','dot on'));r.appendChild(frEl('span','nm',nm));
+        var b=frEl('button','bb','Add');b.type='button';b.addEventListener('click',function(){send(nm)});r.appendChild(b);body.appendChild(r)})(nm);
+    }
+    if(!n)body.appendChild(frEl('div','frhint','Nobody else is nearby right now.'));
+  }
+}
+function frInit(){
+  var tabs=document.querySelectorAll('#friends .frtabs button');
+  for(var i=0;i<tabs.length;i++)tabs[i].addEventListener('click',function(){FR.tab=this.dataset.ft;FR.with=null;frRender()});
+  $('frBack').addEventListener('click',function(){FR.with=null;frRender()});
+  $('frRemove').addEventListener('click',function(){var f=frFind(FR.with);if(f&&confirm('Remove '+f.name+' from your friends? Your private chat with them is deleted.')){netSend({t:'fr_del',id:f.id});FR.with=null}});
+  function send(){var t=$('frIn').value.trim();if(t&&FR.with){netSend({t:'dm',to:FR.with,text:t});$('frIn').value=''}}
+  $('frSend').addEventListener('click',send);
+  $('frIn').addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();send()}else if(e.key==='Escape'){$('frIn').blur()}});
 }
 
 
