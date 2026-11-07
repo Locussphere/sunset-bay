@@ -184,6 +184,8 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
 #friends{position:absolute;right:max(8px,var(--gr));top:8px;bottom:8px;width:min(330px,46vw);z-index:6;display:flex;flex-direction:column;gap:8px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:12px;overflow:hidden}
 #friends[hidden],#frThread[hidden]{display:none}
 #friends h2{margin:0;font:600 24px/1.1 var(--display);color:var(--butter)}
+.frhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#frClose{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.1);color:var(--ink);font:900 18px/1 var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center}#frClose:active{background:rgba(255,255,255,.22)}
 .frtabs,.lgtabs{display:flex;gap:6px}
 .frtabs button,.lgtabs button{flex:1;font:800 12px var(--body);color:var(--dim);background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:99px;padding:6px 8px;cursor:pointer}
 .frtabs button.on,.lgtabs button.on{background:var(--butter);color:#2a1b3d;border-color:var(--butter)}
@@ -364,7 +366,7 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
 </div>
 
 <div id="friends" hidden>
-  <h2>Friends</h2>
+  <div class="frhead"><h2>Friends</h2><button type="button" id="frClose" aria-label="Close friends">&#10005;</button></div>
   <div class="frtabs"><button type="button" class="on" data-ft="list">Friends</button><button type="button" data-ft="req">Requests<span id="frReqN" class="un" hidden></span></button><button type="button" data-ft="add">Add</button></div>
   <div id="frBody"></div>
   <div id="frThread" hidden>
@@ -3244,6 +3246,7 @@ function frRender(){
 function frInit(){
   var tabs=document.querySelectorAll('#friends .frtabs button');
   for(var i=0;i<tabs.length;i++)tabs[i].addEventListener('click',function(){FR.tab=this.dataset.ft;FR.with=null;frRender()});
+  $('frClose').addEventListener('click',function(){closePanels();try{canvas.focus()}catch(e){}});
   $('frBack').addEventListener('click',function(){FR.with=null;frRender()});
   $('frRemove').addEventListener('click',function(){var f=frFind(FR.with);if(f&&confirm('Remove '+f.name+' from your friends? Your private chat with them is deleted.')){netSend({t:'fr_del',id:f.id});FR.with=null}});
   function send(){var t=$('frIn').value.trim();if(t&&FR.with){netSend({t:'dm',to:FR.with,text:t});$('frIn').value=''}}
