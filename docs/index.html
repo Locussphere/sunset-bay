@@ -44,6 +44,7 @@ button{font-family:inherit;color:inherit}
 .btn:hover:not(:disabled){border-color:var(--peach)}.btn:disabled{opacity:.4;cursor:default}
 .btn kbd{opacity:.6;font:inherit;margin-left:5px}
 .btn:focus-visible,.primary:focus-visible,.slot:focus-visible,.it:focus-visible,.rrow:focus-visible,.tab:focus-visible{outline:2px solid var(--butter);outline-offset:2px}
+#buff{position:absolute;top:60px;left:50%;transform:translateX(-50%);padding:6px 14px;border-radius:99px;background:rgba(42,27,61,.85);color:#ffe29a;font-weight:700;font-size:13px;z-index:6;pointer-events:none;border:1px solid rgba(255,226,154,.35)}
 #sleepov{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(20,14,40,.35),rgba(10,6,28,.82));opacity:0;transition:opacity 1.6s;z-index:5}#sleepov.on{opacity:1}
 #prompt{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-weight:800;font-size:14px;max-width:calc(100% - 32px);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 #prompt[hidden]{display:none}#prompt.dim{opacity:.8}#prompt.dim #pkey{background:var(--dim)}
@@ -183,7 +184,8 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
 [hidden]{display:none!important}
 .btn[hidden]{display:none}.un{display:inline-block;margin-left:6px;background:#ff8d6b;color:#2a1b3d;border-radius:99px;padding:0 7px;font:900 11px/17px var(--body)}.un[hidden]{display:none}
 #friends{position:absolute;right:max(8px,var(--gr));top:8px;bottom:8px;width:min(330px,46vw);z-index:6;display:flex;flex-direction:column;gap:8px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:12px;overflow:hidden}
-#friends[hidden],#frThread[hidden]{display:none}
+#friends[hidden],#frThread[hidden],#adm[hidden]{display:none}
+#adm{position:absolute;right:max(8px,var(--gr));top:8px;bottom:8px;width:min(330px,46vw);z-index:6;display:flex;flex-direction:column;gap:8px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:12px;overflow:auto}#adm h2{margin:0;font:600 24px/1.1 var(--display);color:var(--butter)}.admnote{font:600 12px/1.4 var(--body);color:var(--dim)}.admrow{display:flex;flex-direction:column;gap:6px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.07);font:800 14px var(--body)}.admrow .bs{display:flex;gap:6px;flex-wrap:wrap}.admrow .bb{padding:4px 10px}.admrow small{font-weight:600;color:var(--dim)}
 #friends h2{margin:0;font:600 24px/1.1 var(--display);color:var(--butter)}
 .frhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #frClose{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.1);color:var(--ink);font:900 18px/1 var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center}#frClose:active{background:rgba(255,255,255,.22)}
@@ -239,11 +241,11 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
     <button class="btn" id="bHelp" type="button">Help<kbd>H</kbd></button>
     <button class="btn" id="bStyle" type="button">Style<kbd>V</kbd></button>
     <button class="btn" id="bBuild" type="button">Build<kbd>Q</kbd></button>
-    <button class="btn" id="bFriends" type="button" hidden>Friends<kbd>G</kbd><span id="frBadge" class="un" hidden></span></button>
+    <button class="btn" id="bAdmin" type="button" hidden>Billboards</button><button class="btn" id="bFriends" type="button" hidden>Friends<kbd>G</kbd><span id="frBadge" class="un" hidden></span></button>
     <button class="btn" id="bFs" type="button">Fullscreen<kbd>F</kbd></button>
   </div>
 </div>
-<div id="sleepov"></div>
+<div id="sleepov"></div><div id="buff" hidden></div>
 <div id="toasts"></div>
 <div id="chatlog" aria-live="polite"></div>
 <div id="login" hidden><div class="lcard">
@@ -346,7 +348,7 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
 
 <div id="shop" class="modal" hidden>
   <div class="sheet" role="dialog" aria-label="General Store">
-    <div class="shead"><h2>General Store</h2><div class="coin"><span class="dot"></span><b id="shopCoins">0</b></div></div>
+    <div class="shead"><h2 id="shopTitle">General Store</h2><div class="coin"><span class="dot"></span><b id="shopCoins">0</b></div></div>
     <div class="tabs" id="shopTabs"></div>
     <div class="slist" id="shopList"></div>
     <button class="btn close" type="button" data-close>Close</button>
@@ -365,6 +367,12 @@ body.building #prompt,body.building #hint{bottom:calc(128px + env(safe-area-inse
   <h2>Your look</h2>
   <div id="lookBody"></div>
   <div class="lookbtns"><button type="button" class="bb" id="lookRand">Randomise</button><button type="button" class="bb pl" id="lookDone" style="display:inline-block">Done</button></div>
+</div>
+
+<div id="adm" hidden>
+  <div class="frhead"><h2>Billboards</h2><button type="button" id="admClose" aria-label="Close billboards">&#10005;</button></div>
+  <div class="admnote">Stand where you want a board, face the spot, then press <b>Place here</b>. The board appears 4 steps in front of you, turned towards you. Add or edit ads in the admin page.</div>
+  <div id="admBody"></div>
 </div>
 
 <div id="friends" hidden>
@@ -452,6 +460,7 @@ function baseH(x,z){
 /* ---- layout (single source of truth for terrain pads, buildings, fields) ---- */
 var BLD=[
  {id:'cafe',n:'Café',x:-15,z:-11,w:6,d:5,h:3.2,wall:0xffd9b8,roof:0xe8715f,int:'cafe',sign:'Café'},
+ {id:'kitchen',n:'Spice Kitchen',x:-27,z:-1,w:5.6,d:5,h:3.2,wall:0xdff0c8,roof:0xc8553d,int:'kitchen',sign:'Kitchen'},
  {id:'store',n:'General Store',x:15,z:-12,w:6.4,d:5,h:3.2,wall:0xcfe9d6,roof:0x6f8fd8,int:'store',sign:'Store'},
  {id:'workshop',n:"Carpenter's Workshop",x:19,z:11,w:7,d:5.6,h:3.2,wall:0xe8c99b,roof:0x8a5a3c,int:'workshop',sign:'Workshop'},
  {id:'cottage',n:'Your Cottage',x:-54,z:12,w:5.6,d:4.8,h:3,wall:0xfff0c4,roof:0xd98f5f,int:'home',sign:'Home'},
@@ -1082,6 +1091,8 @@ def('door','Door','block','#9a6a44',{sell:4,place:'door'});
 var CROPS={wheat:{n:'Wheat',seed:'wheat_seed',stage:22,color:'#e8c46a',sell:8,yMin:2,yMax:4},carrot:{n:'Carrots',seed:'carrot_seed',stage:26,color:'#ff9a3c',sell:10,yMin:2,yMax:3},
  tomato:{n:'Tomatoes',seed:'tomato_seed',stage:32,color:'#ff5a4f',sell:12,yMin:2,yMax:4},strawberry:{n:'Strawberries',seed:'strawberry_seed',stage:34,color:'#ff6f91',sell:15,yMin:2,yMax:4},
  pumpkin:{n:'Pumpkins',seed:'pumpkin_seed',stage:44,color:'#ff8a2a',sell:25,yMin:1,yMax:2}};
+def('tea','Sunset Tea','food','#d9a066',{sell:2});def('chai','Masala Chai','food','#c98f5d',{sell:3});def('lassi','Mango Lassi','food','#ffc94a',{sell:5});
+def('pazham','Banana Fry','food','#e8b050',{sell:4});def('dosa','Dosa','food','#e6c58a',{sell:4});def('parotta','Parotta','food','#d9a066',{sell:5});def('meal','Kerala Meal','food','#8fbf6a',{sell:9});
 def('banana','Bananas','res','#ffe066',{sell:6});def('mango','Mangoes','res','#ffb42e',{sell:10});def('jackfruit','Jackfruit','res','#b5c94a',{sell:14});
 def('sapling','Tree Sapling','sapling','#5fa862',{sell:3});
 var SEEDPRICE={wheat_seed:8,carrot_seed:10,tomato_seed:12,strawberry_seed:14,pumpkin_seed:18,sapling:10};
@@ -1177,19 +1188,33 @@ function ev(t,i,n){
   saveSoon();
 }
 
+/* ---- eating and drinking: a short speed boost ---- */
+var EAT={tea:[1.15,90],chai:[1.25,120],lassi:[1.25,150],pazham:[1.2,90],dosa:[1.25,120],parotta:[1.3,150],meal:[1.4,240],bread:[1.1,60],pumpkin_pie:[1.2,90],fruit_salad:[1.2,90],apple:[1.05,30],banana:[1.08,45],mango:[1.08,45]};
+var DRINK={tea:1,chai:1,lassi:1},buff=null;
+var MENU={cafe:[['tea',4],['chai',7],['lassi',12]],kitchen:[['pazham',8],['dosa',9],['parotta',10],['meal',20]]};
+var KITCHEN_BUYS=['apple','banana','mango','jackfruit','tomato','carrot','strawberry','pumpkin'];
+function eatNote(id){var e=EAT[id];return e?'+'+Math.round((e[0]-1)*100)+'% speed for '+(e[1]>=120?Math.round(e[1]/60*10)/10+' min':e[1]+' s'):''}
+function eatItem(id){
+  if(!EAT[id]||have(id)<1)return false;
+  takeItem(id,1);var e=EAT[id];buff={mul:e[0],until:perfT+e[1],name:ITEMS[id].name};
+  toast((DRINK[id]?'Ahh, ':'Yum! ')+ITEMS[id].name+': '+eatNote(id));burst(P.x,P.y+1.6,P.z,'#ffe29a',8);
+  if(typeof renderBag==='function'&&!$('bag').hidden)renderBag();saveSoon();return true;
+}
 /* ---- save / load ---- */
 var SAVEKEY='sunsetbay.save.v2',saveTimer=0,extraSave={};
 function saveSoon(){if(!saveTimer)saveTimer=setTimeout(saveNow,900)}
 function saveNow(){
   saveTimer=0;
+  if(typeof cloud==='object'&&cloud.hold)return; /* a newer copy from the server is being loaded: do not overwrite it */
   try{
     var s={inv:inv,hotbar:hotbar,xp:xp,coins:coins,qi:qi,qprog:qprog,tod:tod};
     if(typeof gridSave==='function')s.grids=gridSave();
     if(typeof farmSave==='function')s.farm=farmSave();
     if(typeof lookSave==='function')s.look=lookSave();
     if(typeof plantedSave==='function')s.planted=plantedSave();
-    s.pos={x:P.x,z:P.z,area:area};
+    s.pos={x:P.x,z:P.z,area:area};s.cv=(typeof cloud==='object'?cloud.cv:0)|0;
     localStorage.setItem(SAVEKEY,JSON.stringify(s));
+    if(typeof netSaveUp==='function')netSaveUp(s);
   }catch(e){}
 }
 var loaded=null;
@@ -1204,7 +1229,7 @@ function loadSave(){
   setQuest(loaded&&loaded.qi?loaded.qi:0,loaded?loaded.qprog:null);
 }
 function resetSave(){try{localStorage.removeItem(SAVEKEY)}catch(e){}location.reload()}
-addEventListener('beforeunload',function(){if(typeof P!=='undefined'&&P&&started)saveNow()});
+addEventListener('beforeunload',function(){if(typeof P!=='undefined'&&P&&started){saveNow();if(typeof netSaveFlush==='function')netSaveFlush(true)}});
 
 /* ===== models: materials, placeable pieces, people, signs ===== */
 var _lm={};
@@ -1311,10 +1336,10 @@ function makePerson(o){
 }
 
 /* ===== buildings: exteriors, town decor, interiors, NPCs, stations ===== */
-var COL={out:[],cafe:[],store:[],workshop:[],home:[]};
+var COL={out:[],cafe:[],store:[],workshop:[],home:[],kitchen:[]};
 function colC(a,x,z,r){COL[a].push({t:'c',x:x,z:z,r:r})}
 function colB(a,x,z,hx,hz,ry){ry=ry||0;COL[a].push({t:'o',x:x,z:z,hx:hx,hz:hz,c:Math.cos(ry),s:Math.sin(ry)})}
-var INTS={cafe:{ox:0},store:{ox:50},workshop:{ox:100},home:{ox:150}},INTG={};
+var INTS={cafe:{ox:0},store:{ox:50},workshop:{ox:100},home:{ox:150},kitchen:{ox:200}},INTG={};
 var stations=[],npcs=[],doorList=[],curB=null,windBlades=null,PYR=new THREE.ConeGeometry(1,1,4);
 
 /* ---------- exteriors ---------- */
@@ -1444,18 +1469,18 @@ function addNpc(area,o){
 function buildInterior(area){
   var ox=INTS[area].ox,g=new THREE.Group();g.position.set(ox,INT_Y,0);g.visible=false;intGroup.add(g);INTG[area]=g;
   var o,i;
-  if(area==='cafe'){
-    shell(g,{fa:'#b98a5c',fb:'#c99a6a',wall:0xffe3c4,dark:0xe8b48f,trim:0xfff6ea});
-    bx(g,8,1.1,1.1,-3,.55,-4.6,0xc98f5d,true);bx(g,8.2,.12,1.3,-3,1.16,-4.6,0xfff1e3);colB('cafe',ox-3,-4.6,4.1,.65);
+  if(area==='cafe'||area==='kitchen'){var K=area==='kitchen';
+    shell(g,K?{fa:'#a7835a',fb:'#b8946a',wall:0xe9f2d4,dark:0xc9d9a8,trim:0xfff6ea}:{fa:'#b98a5c',fb:'#c99a6a',wall:0xffe3c4,dark:0xe8b48f,trim:0xfff6ea});
+    bx(g,8,1.1,1.1,-3,.55,-4.6,0xc98f5d,true);bx(g,8.2,.12,1.3,-3,1.16,-4.6,0xfff1e3);colB(area,ox-3,-4.6,4.1,.65);
     bx(g,1,.6,.6,-5.5,1.5,-4.7,0x6f6a80);bx(g,.3,.2,.3,-5.5,1.9,-4.7,0xe8715f);
     for(i=0;i<3;i++){var cake=new THREE.Mesh(GEO.cyl,L([0xffb3cf,0xfff0c4,0xd9a066][i]));cake.scale.set(.3,.22,.3);cake.position.set(-2.4+i*.9,1.34,-4.5);g.add(cake)}
-    shelfUnit(g,4.6,-5.55,5,0,PAL);colB('cafe',ox+4.6,-5.55,2.5,.4);
+    shelfUnit(g,4.6,-5.55,5,0,PAL);colB(area,ox+4.6,-5.55,2.5,.4);
     roundTable(g,ox,-4.2,.4,'cafe');roundTable(g,ox,-.2,2.2,'cafe');roundTable(g,ox,3.8,.6,'cafe');roundTable(g,ox,5.4,-2.4,'cafe');
     pendant(g,-4.2,.4);pendant(g,-.2,2.2);pendant(g,3.8,.6);pendant(g,-3,-3);
-    var ms=signMesh("Today: Sunset Tea",3.2,.8,'#2a1b3d','#ffe29a');ms.position.set(-3,3.3,-5.93);g.add(ms);
+    var ms=signMesh(K?"Fresh and hot":"Today: Sunset Tea",3.2,.8,'#2a1b3d','#ffe29a');ms.position.set(-3,3.3,-5.93);g.add(ms);
     var rg=buildModel('rug');rg.scale.set(3,1,2.2);rg.position.set(-.2,0,2.2);g.add(rg);
-    [[-7,-5],[7.2,4.8],[-7.2,4.6]].forEach(function(p){var pot=buildModel('pot');pot.scale.setScalar(1.5);pot.position.set(p[0],0,p[1]);g.add(pot);colC('cafe',ox+p[0],p[1],.5)});
-    addNpc('cafe',{name:'Mina',x:-3,z:-5.5,shirt:0xe8715f,hair:0x4a2f3a,apron:0xfff6ea,lines:["Welcome to Sunset Café. Tea is always on the house after dusk.","Bread from the furnace sells for good coins at the General Store.","I hear the cherry grove is lovely in the evening."]});
+    [[-7,-5],[7.2,4.8],[-7.2,4.6]].forEach(function(p){var pot=buildModel('pot');pot.scale.setScalar(1.5);pot.position.set(p[0],0,p[1]);g.add(pot);colC(area,ox+p[0],p[1],.5)});
+    addNpc(area,{name:K?'Anil':'Mina',x:-3,z:-5.5,shirt:K?0x5f8f5a:0xe8715f,hair:0x4a2f3a,apron:0xfff6ea,shop:K?'kitchen':'cafe',lines:K?["Hot parotta and fresh dosa. I also buy your fruit and vegetables.","Eat well and you will run faster."]:["Welcome to Sunset Café. A hot cup will put a spring in your step.","Bread from the furnace sells for good coins at the General Store.","I hear the cherry grove is lovely in the evening."]});
   }
   if(area==='store'){
     shell(g,{fa:'#a9c9a0',fb:'#b6d4ad',wall:0xe4f2dc,dark:0xbcd9b0,trim:0xfff6ea});
@@ -1496,7 +1521,7 @@ function buildInterior(area){
 function initBuildings(){
   BLD.forEach(houseMesh);
   buildDecor();
-  ['cafe','store','workshop','home'].forEach(buildInterior);
+  ['cafe','store','workshop','home','kitchen'].forEach(buildInterior);
 }
 
 /* ---------- enter / exit ---------- */
@@ -1523,7 +1548,7 @@ function buildingCandidates(list){
     var ox=INTS[area].ox;
     if(Math.abs(P.x-ox)<2.6&&P.z>3.6)list.push({d:Math.abs(P.z-5.6)+.2,pri:0,label:'Leave '+(curB?curB.b.n:''),run:exitBuilding});
     for(i=0;i<npcs.length;i++){var n=npcs[i];if(n.area!==area)continue;d=Math.hypot(P.x-n.x,P.z-n.z);
-      if(d<3.6)list.push({d:d,pri:0,label:n.shop?'Shop with '+n.name:'Talk to '+n.name,run:(function(nn){return function(){talkNpc(nn)}})(n)})}
+      if(d<3.6)list.push({d:d,pri:0,label:n.shop?(n.shop==='store'||n.shop===true?'Shop with ':'Order from ')+n.name:'Talk to '+n.name,run:(function(nn){return function(){talkNpc(nn)}})(n)})}
   }
   for(i=0;i<stations.length;i++){var s=stations[i];if(s.area!==area)continue;d=Math.hypot(P.x-s.x,P.z-s.z);
     if(d<(s.type==='notice'?3:2.9))list.push({d:d,pri:0,label:s.type==='notice'?'Read the quest board':'Use '+s.type,run:(function(ss){return function(){useStation(ss)}})(s)});
@@ -1534,7 +1559,7 @@ function useStation(s){
   openCraft(s.type==='furnace'?'furnace':'bench');
 }
 function talkNpc(n){
-  if(n.shop){openShop();return}
+  if(n.shop){openShop(n.shop===true?'store':n.shop);return}
   toast(n.name+': '+n.lines[n.li++%n.lines.length]);
 }
 function updateNpcs(dt){
@@ -2420,7 +2445,8 @@ function updatePlayer(dt){
   if(mag>.05){var wl=Math.hypot(wx,wz);P.dx=wx/wl;P.dz=wz/wl}
   var out=area==='out',gh=out?groundAt(P.x,P.z,P.y):INT_Y,wade=out&&isWading(P.x,P.z,gh);
   var run=!block&&(keys.ShiftLeft||keys.ShiftRight||(joy.active&&mag>.85));
-  var target=mag>.05?(run?8.6:5)*Math.min(1,mag):0;if(wade)target*=.6;
+  if(buff&&perfT>buff.until)buff=null;
+  var target=mag>.05?(run?8.6:5)*Math.min(1,mag):0;if(wade)target*=.6;if(buff)target*=buff.mul;
   P.sp+=(target-P.sp)*Math.min(1,dt*10);
   if(P.sp>.05){
     var step=P.sp*dt,nx=P.x+P.dx*step,nz=P.z+P.dz*step;
@@ -2470,6 +2496,7 @@ function findInteract(){
   buildingCandidates(list);gridCandidates(list);
   if(area==='out'){farmCandidates(list);nodeCandidates(list,P.x,P.z);plantCandidates(list);adCandidates(list)}
   var best=null;for(var i=0;i<list.length;i++){if(!best||list[i].d<best.d)best=list[i]}
+  var si=selItem();if(!best&&si&&EAT[si]&&have(si)>0)best={d:99,pri:9,label:(DRINK[si]?'Drink ':'Eat ')+ITEMS[si].name,sub:eatNote(si),run:function(){eatItem(si)}};
   return best;
 }
 function doInteract(){if(bm.on&&started&&!panelOpen()){piecePlace();return}if(cur&&started&&!panelOpen())cur.run()}
@@ -2546,7 +2573,7 @@ function updateCamera(dt){
 }
 
 /* ===== UI: HUD, panels, icons, shop ===== */
-var PANELS=['bag','craft','shop','map','help','look','friends'],craftStation='hand',craftSel=null,bagSel=null,shopTab='buy';
+var PANELS=['bag','craft','shop','map','help','look','friends','adm'],craftStation='hand',craftSel=null,bagSel=null,shopTab='buy';
 function panelOpen(){for(var i=0;i<PANELS.length;i++)if(!$(PANELS[i]).hidden)return true;return false}
 function closePanels(){PANELS.forEach(function(p){$(p).hidden=true});resetArmed=false;$('resetBtn').textContent='Reset progress'}
 function togglePanel(name){
@@ -2554,6 +2581,7 @@ function togglePanel(name){
   if(open)return;
   if(name==='craft'){openCraft('hand');return}
   if(name==='look'){openLook();return}
+  if(name==='adm'){if(!net.adm){toast('Admin accounts only.');return}$(name).hidden=false;admRender();return}
   if(name==='friends'){if(!net.acc){toast('Sign in to use friends.');return}$(name).hidden=false;frOpenPanel();return}
   $(name).hidden=false;
   if(name==='bag')renderBag();if(name==='map')drawMap($('bigmap').getContext('2d'),640,true);
@@ -2661,7 +2689,8 @@ function renderBag(){
   ids.forEach(function(id){h+='<button type="button" class="it'+(bagSel===id?' sel':'')+'" data-id="'+id+'"><img alt="" src="'+iconURL(id)+'"><b>'+have(id)+'</b><span>'+ITEMS[id].name+'</span></button>'});
   $('bagList').innerHTML=h||'<p class="empty">Nothing yet. Gather wood from a tree to begin.</p>';
   var sel=bagSel&&have(bagSel)>0?ITEMS[bagSel]:null;
-  $('bagDetail').innerHTML=sel?'<b>'+sel.name+'</b><span>'+(sel.sell?'Sells for '+sel.sell+' coins. ':'')+'</span><button type="button" class="btn" id="toHot">Put in hotbar slot '+(selSlot+1)+'</button>':'<span>Select an item to assign it to your hotbar.</span>';
+  $('bagDetail').innerHTML=sel?'<b>'+sel.name+'</b><span>'+(sel.sell?'Sells for '+sel.sell+' coins. ':'')+'</span><button type="button" class="btn" id="toHot">Put in hotbar slot '+(selSlot+1)+'</button>'+(EAT[bagSel]?'<button type="button" class="btn" id="eatBtn">'+(DRINK[bagSel]?'Drink':'Eat')+' ('+eatNote(bagSel)+')</button>':''):'<span>Select an item to assign it to your hotbar.</span>';
+  var eb=$('eatBtn');if(eb)eb.addEventListener('click',function(){eatItem(bagSel)});
   var b=$('toHot');if(b)b.addEventListener('click',function(){var o=hotbar.indexOf(bagSel);if(o>=0)hotbar[o]=null;hotbar[selSlot]=bagSel;refreshHotbar();saveSoon()});
 }
 
@@ -2692,27 +2721,37 @@ function renderCraft(){
 }
 
 /* ---- shop ---- */
-function openShop(){closePanels();$('shop').hidden=false;renderShop()}
+var shopMode='store',SHOPNAME={store:'General Store',cafe:'Sunset Café',kitchen:'Spice Kitchen'};
+function openShop(mode){shopMode=mode||'store';shopTab='buy';closePanels();$('shop').hidden=false;renderShop()}
+function shopSellPrice(id){var p=ITEMS[id].sell;return shopMode==='kitchen'?Math.ceil(p*1.3):p}
+function shopBuyPrice(id){if(shopMode==='store')return SEEDPRICE[id]||45;var m=MENU[shopMode]||[];for(var i=0;i<m.length;i++)if(m[i][0]===id)return m[i][1];return 999}
 function renderShop(){
-  $('shopCoins').textContent=coins;
-  var tabs='';['buy','sell'].forEach(function(t){tabs+='<button type="button" class="tab'+(t===shopTab?' on':'')+'" data-tab="'+t+'">'+(t==='buy'?'Buy':'Sell')+'</button>'});$('shopTabs').innerHTML=tabs;
+  $('shopCoins').textContent=coins;$('shopTitle').textContent=SHOPNAME[shopMode];
+  var tabs='',names=shopMode==='cafe'?['buy']:['buy','sell'];
+  names.forEach(function(t){tabs+='<button type="button" class="tab'+(t===shopTab?' on':'')+'" data-tab="'+t+'">'+(t==='buy'?(shopMode==='store'?'Buy':'Menu'):(shopMode==='kitchen'?'Sell fruit':'Sell'))+'</button>'});$('shopTabs').innerHTML=tabs;
   var h='';
   if(shopTab==='buy'){
-    Object.keys(SEEDPRICE).forEach(function(id){h+=shopRow(id,SEEDPRICE[id],'Buy',coins>=SEEDPRICE[id])});
-    h+=shopRow('watering_can',45,'Buy',coins>=45&&!have('watering_can'));
+    if(shopMode==='store'){
+      Object.keys(SEEDPRICE).forEach(function(id){h+=shopRow(id,SEEDPRICE[id],'Buy',coins>=SEEDPRICE[id])});
+      h+=shopRow('watering_can',45,'Buy',coins>=45&&!have('watering_can'));
+    }else{
+      MENU[shopMode].forEach(function(m){h+=shopRow(m[0],m[1],'Buy',coins>=m[1],0,eatNote(m[0]))});
+      h+='<p class="empty">Buy it, then eat or drink it from your backpack, or select it on the hotbar and press E.</p>';
+    }
   }else{
-    Object.keys(ITEMS).filter(function(i){return have(i)>0&&ITEMS[i].sell>0}).forEach(function(id){h+=shopRow(id,ITEMS[id].sell,'Sell',true,have(id))});
-    if(!h)h='<p class="empty">You have nothing the store buys yet.</p>';
+    var ids=Object.keys(ITEMS).filter(function(i){return have(i)>0&&ITEMS[i].sell>0&&(shopMode==='store'||KITCHEN_BUYS.indexOf(i)>=0)});
+    ids.forEach(function(id){h+=shopRow(id,shopSellPrice(id),'Sell',true,have(id))});
+    if(!h)h='<p class="empty">'+(shopMode==='kitchen'?'Anil buys fruit and vegetables, a little above the store price. You have none right now.':'You have nothing the store buys yet.')+'</p>';
   }
   $('shopList').innerHTML=h;
 }
-function shopRow(id,price,verb,ok,count){
-  return '<div class="srow"><img alt="" src="'+iconURL(id)+'"><span>'+ITEMS[id].name+(count?' <em>×'+count+'</em>':'')+'</span><b>'+price+'</b><button type="button" class="btn" data-act="'+verb.toLowerCase()+'" data-id="'+id+'"'+(ok?'':' disabled')+'>'+verb+'</button>'+(verb==='Sell'&&count>1?'<button type="button" class="btn" data-act="sellall" data-id="'+id+'">All</button>':'')+'</div>';
+function shopRow(id,price,verb,ok,count,note){
+  return '<div class="srow"><img alt="" src="'+iconURL(id)+'"><span>'+ITEMS[id].name+(count?' <em>×'+count+'</em>':'')+(note?'<small style="display:block;opacity:.7;font-size:11px">'+note+'</small>':'')+'</span><b>'+price+'</b><button type="button" class="btn" data-act="'+verb.toLowerCase()+'" data-id="'+id+'"'+(ok?'':' disabled')+'>'+verb+'</button>'+(verb==='Sell'&&count>1?'<button type="button" class="btn" data-act="sellall" data-id="'+id+'">All</button>':'')+'</div>';
 }
 function shopAct(act,id){
-  if(act==='buy'){var p=SEEDPRICE[id]||45;if(coins<p)return;addCoins(-p);addItem(id,1)}
-  else if(act==='sell'){if(have(id)<1)return;takeItem(id,1);addCoins(ITEMS[id].sell)}
-  else if(act==='sellall'){var n=have(id);if(!n)return;takeItem(id,n);addCoins(ITEMS[id].sell*n);toast('Sold '+n+' × '+ITEMS[id].name+' for '+ITEMS[id].sell*n+' coins')}
+  if(act==='buy'){var p=shopBuyPrice(id);if(coins<p)return;addCoins(-p);addItem(id,1)}
+  else if(act==='sell'){if(have(id)<1)return;takeItem(id,1);addCoins(shopSellPrice(id))}
+  else if(act==='sellall'){var n=have(id);if(!n)return;takeItem(id,n);addCoins(shopSellPrice(id)*n);toast('Sold '+n+' × '+ITEMS[id].name+' for '+shopSellPrice(id)*n+' coins')}
   renderShop();
 }
 
@@ -2741,7 +2780,7 @@ function drawMap(ctx,S,big,mini){
 
 /* ---- wiring ---- */
 function initUI(){
-  initLook();initNet();$('bFriends').addEventListener('click',function(){togglePanel('friends')});
+  initLook();initNet();$('bFriends').addEventListener('click',function(){togglePanel('friends')});$('bAdmin').addEventListener('click',function(){togglePanel('adm')});$('admClose').addEventListener('click',function(){$('adm').hidden=true});
   document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closePanels)});
   document.querySelectorAll('.modal').forEach(function(m){m.addEventListener('pointerdown',function(e){if(e.target===m)closePanels()})});
   $('bBag').addEventListener('click',function(){togglePanel('bag')});$('bCraft').addEventListener('click',function(){togglePanel('craft')});
@@ -2804,7 +2843,7 @@ function frame(now){
   var t=now/1000,dt=Math.min(.05,Math.max(0,t-last));last=t;perfT+=dt;gameT+=dt;
   updateSky(dt);
   if(started){updatePlayer(dt);updateGrid(dt);updateFarming(dt)}
-  updateRemotes(dt);netTick(dt);dropsTick(dt);fireTick(dt);
+  updateRemotes(dt);netTick(dt);dropsTick(dt);fireTick(dt);buffHud();
   updateNodes(dt);updateParts(dt);updateClouds(dt);updateNpcs(dt);updateWater(dt,perfT);updateCamera(dt);
   cullAcc+=dt;if(cullAcc>.25){cullAcc=0;cullNodes(P.x,P.z,area!=='out');if(!started)cullNodes(0,0,false)}
   renderer.render(scene,camera);
@@ -2813,7 +2852,7 @@ function frame(now){
 }
 $('startBtn').addEventListener('click',begin);
 $('startLook').addEventListener('click',function(){begin();togglePanel('look')});
-window.__sb={get DROPS(){return DROPS},get SEATS(){return SEATS},get sit(){return sit},get FIRES(){return FIRES},get ADS(){return ADS},sitOn:function(s){sitOn(s)},standUp:function(){standUp()},placeAt:function(t,x,z,r){var g=grids.world;gridPlace(g,Math.floor(x-g.ox),Math.floor(terrainH(x,z)-g.oy+.01),Math.floor(z-g.oz),t,r|0)},get inv(){return inv},get qprog(){return qprog},get coins(){return coins},get xp(){return xp},get hotbar(){return hotbar},get scene(){return scene},get mist(){return mist},get sun(){return sun},get hemi(){return hemi},P:P,cam:cam,tp:function(x,z){P.x=x;P.z=z;P.y=terrainH(x,z);cam.tx=x;cam.tz=z;cam.ty=P.y+1.5},begin:function(){begin()},
+window.__sb={get DROPS(){return DROPS},get buff(){return buff},get doors(){return doorList},get cloud(){return cloud},get coins(){return coins},give:function(id,n){addItem(id,n)},addCoins:function(n){addCoins(n)},eat:function(id){return eatItem(id)},openShop:function(m){openShop(m)},closePanels:function(){closePanels()},enter:function(id){for(var i=0;i<doorList.length;i++)if(doorList[i].b.id===id){enterBuilding(doorList[i]);return true}return false},get SEATS(){return SEATS},get sit(){return sit},get FIRES(){return FIRES},get ADS(){return ADS},sitOn:function(s){sitOn(s)},standUp:function(){standUp()},placeAt:function(t,x,z,r){var g=grids.world;gridPlace(g,Math.floor(x-g.ox),Math.floor(terrainH(x,z)-g.oy+.01),Math.floor(z-g.oz),t,r|0)},get inv(){return inv},get qprog(){return qprog},get coins(){return coins},get xp(){return xp},get hotbar(){return hotbar},get scene(){return scene},get mist(){return mist},get sun(){return sun},get hemi(){return hemi},P:P,cam:cam,tp:function(x,z){P.x=x;P.z=z;P.y=terrainH(x,z);cam.tx=x;cam.tz=z;cam.ty=P.y+1.5},begin:function(){begin()},
   give:function(id,n){addItem(id,n)},nodes:nodes,terrainH:terrainH,enter:function(i){enterBuilding(doorList[i])},exit:exitBuilding,get area(){return area},
   openCraft:openCraft,openShop:openShop,togglePanel:togglePanel,select:selectSlot,get cur(){return cur},tiles:tiles,get RP(){return RP},grids:grids,sweepNear:sweepNear,nodeBlocked:nodeBlocked,bm:bm,PIECES:PIECES,pieceAdd:pieceAdd,build:buildToggle,pieceTop:pieceTop,setTod:function(h){tod=h},get tod(){return tod},get net(){return net}};
 setTimeout(function(){
@@ -2989,7 +3028,7 @@ function netConnect(){
 }
 /* the one place a connection is declared lost (closed by the browser, by the server, or by the watchdog) */
 function netGone(code,why){
-  frShow(0);var was=net.joined;net.joined=false;net.on=false;net.ws=null;net.lastCode=code||0;netClearRemotes();
+  frShow(0);admShow();var was=net.joined;net.joined=false;net.on=false;net.ws=null;net.lastCode=code||0;netClearRemotes();
   netLog('closed code='+(code||'?')+(why?' '+why:'')+(was?' (was online)':''));
   if(code===4000){netStatus('off','Opened in another tab');netLog('another tab took over, not retrying');return}
   if(code===4401){netLog('server did not accept the sign-in');try{localStorage.removeItem('sunsetbay.tok')}catch(e){}acct.tok='';netAuth(netConnect);return}
@@ -3044,6 +3083,9 @@ function netHandle(m){
     case'pong':break;
     case'dspawn':case'drem':case'dgot':dropsHandle(m);break;
     case'ads':adsHandle(m.list);break;
+    case'adlist':admList=m.list||[];if(!$('adm').hidden)admRender();break;
+    case'adm':net.adm=m.on?1:0;admShow();toast(net.adm?'You are now a billboard admin':'Billboard admin removed');break;
+    case'saved':cloudSaved(m);break;
     case'wreset':netClearWorld();sweepAll();dropsInit([]);if(m.chat){chatLines=[];$('chatlog').innerHTML=''}toast('The world was reset by the admin');break;
     case'kicked':net.kickWhy=m.why||'';netLog('server: '+(m.why||'replaced by a newer tab'));break;
     case'name':if(m.name){LOOK.name=m.name;applyLook();if(!$('look').hidden)renderLook();saveSoon();toast('Your name is '+m.name)}break;
@@ -3057,10 +3099,45 @@ function netClearWorld(){
   var g=grids.world;Object.keys(g.cells).forEach(function(k){if(g.cells[k])gridRemove(g,k)});
   nodes.forEach(function(n){if(n.planted)removeNode(n)});
 }
+/* ---- cloud save: the server keeps each account's progress; the newest copy wins when you sign in ---- */
+var cloud={cv:0,at:0,tm:0,pend:null,last:''};
+function cloudPayload(s){var p={},k;for(k in s)if(k!=='pos'&&k!=='tod'&&k!=='planted'&&k!=='cv')p[k]=s[k];
+  if(p.grids&&typeof p.grids==='object'){var g={};for(k in p.grids)if(k!=='world')g[k]=p.grids[k];p.grids=g}return p}
+function netSaveUp(s){if(!net.joined||!net.acc||cloud.hold)return;cloud.pend=s;if(cloud.tm)return;cloud.tm=setTimeout(function(){netSaveFlush(false)},Math.max(1500,20000-(Date.now()-cloud.at)))}
+function netSaveFlush(force){
+  if(cloud.tm){clearTimeout(cloud.tm);cloud.tm=0}
+  var s=cloud.pend;if(!s||!net.joined||!net.acc||cloud.hold)return;
+  var p=cloudPayload(s),j=JSON.stringify(p);if(j===cloud.last&&!force)return;
+  cloud.last=j;cloud.at=Date.now();cloud.pend=null;netSend({t:'save',data:p});
+}
+function cloudInit(m){
+  var rsOld=0;try{rsOld=+localStorage.getItem('sunsetbay.rs')||0}catch(e){}
+  var rs=m.rs|0,again=false;try{again=sessionStorage.getItem('sb.cloudReload')===String(rs)+':'+((m.save&&m.save.cv)|0)}catch(e){}
+  if(rs!==rsOld){
+    try{localStorage.setItem('sunsetbay.rs',String(rs));if(rs>rsOld)localStorage.removeItem(SAVEKEY)}catch(e){}
+    if(rs>rsOld&&!again){cloud.hold=1;try{sessionStorage.setItem('sb.cloudReload',rs+':'+((m.save&&m.save.cv)|0))}catch(e){}toast('Your progress was reset by the admin. Restarting…');setTimeout(function(){location.reload()},1400);return}
+  }
+  if(m.save&&m.save.data){
+    var lcv=((loaded&&loaded.cv)|0);cloud.cv=m.save.cv|0;
+    if(m.save.cv!==lcv&&!again){
+      cloud.hold=1;try{sessionStorage.setItem('sb.cloudReload',rs+':'+m.save.cv)}catch(e){}
+      try{var d=Object.assign({},m.save.data,{cv:m.save.cv});localStorage.setItem(SAVEKEY,JSON.stringify(d))}catch(e){}
+      toast('Loading your saved progress…');setTimeout(function(){location.reload()},1200);return}
+  }else{cloud.cv=0;saveSoon()}
+}
+function cloudSaved(m){
+  if(m.cv)cloud.cv=m.cv|0;
+  if(m.fix){
+    if(typeof m.fix.coins==='number')coins=m.fix.coins;if(typeof m.fix.xp==='number')xp=m.fix.xp;
+    if(m.fix.inv){inv={};for(var k in m.fix.inv)if(ITEMS[k])inv[k]=m.fix.inv[k]|0}
+    refreshStatus();refreshHotbar();toast('The server adjusted some unusual progress');saveSoon();
+  }
+}
 function netInit(m){
   if(!LOOK.name&&m.name){net.guest=m.name;try{localStorage.setItem('sunsetbay.guest',m.name)}catch(e){}}
-  net.acc=m.acc?1:0;acct.hasPw=!!m.pw;frShow(1);
-  net.id=m.id;net.joined=true;net.on=true;net.tries=0;net.lastCode=0;net.n=m.players.length+1;
+  net.acc=m.acc?1:0;net.adm=m.adm?1:0;admShow();acct.hasPw=!!m.pw;frShow(1);
+  if(net.acc)cloudInit(m);
+  net.id=m.id;net.joined=true;admShow();net.on=true;net.tries=0;net.lastCode=0;net.n=m.players.length+1;
   netStatus('on','Online · '+net.n);
   netClearRemotes();
   netClearWorld();
@@ -3451,6 +3528,15 @@ function buildCamp(cx,cz){
 }
 function initCamps(){[[16,-18],[-96,58],[34,92]].forEach(function(c){buildCamp(c[0],c[1])})}
 
+/* the little speed-boost chip at the top of the screen */
+var buffShown='';
+function buffHud(){
+  var el=$('buff');if(!el)return;
+  if(!buff||perfT>buff.until){if(buffShown){el.hidden=true;buffShown=''}return}
+  var left=Math.ceil(buff.until-perfT),t=buff.name+' · +'+Math.round((buff.mul-1)*100)+'% speed · '+Math.floor(left/60)+':'+('0'+(left%60)).slice(-2);
+  if(t!==buffShown){buffShown=t;el.textContent=t;el.hidden=false}
+}
+
 /* ===== sponsor billboards (placed by the admin, delivered by the server) ===== */
 var ADS={};
 function adBuild(a){
@@ -3493,6 +3579,32 @@ function adOpen(a){
   if(confirm('Open '+host+' in a new tab?\n\nThis is a sponsored link; it leaves the game.')){
     if(net.joined)netSend({t:'adclick',id:a.id});
     window.open(a.link,'_blank','noopener,noreferrer')}
+}
+
+/* ---- in-game admin: place billboards where you stand ---- */
+var admList=[];
+function admShow(){var b=$('bAdmin');if(!b)return;b.hidden=!(net.adm&&net.joined);if(b.hidden&&!$('adm').hidden)$('adm').hidden=true}
+function admSend(o){o.t='adplace';if(net.ws&&net.ws.readyState===1)net.ws.send(JSON.stringify(o))}
+function admPlace(id,keepR){
+  if(area!=='out'){toast('Go outside to place a board');return}
+  var x=P.x+Math.sin(P.h)*4,z=P.z+Math.cos(P.h)*4;
+  var gh=groundAt(x,z,P.y);if(gh<.3||isWading(x,z,gh)){toast('That spot is in the water');return}
+  var r=Math.round((P.h+Math.PI)/(Math.PI/2));r=((r%4)+4)%4;
+  admSend({id:id,x:+x.toFixed(1),z:+z.toFixed(1),r:r});toast('Billboard placed')
+}
+function admRender(){
+  var b=$('admBody');b.innerHTML='';
+  if(!admList.length){var n=document.createElement('div');n.className='admnote';n.textContent='No ads yet. Create one in the admin page (Ads tab), then place it here.';b.appendChild(n);return}
+  admList.forEach(function(a){
+    var row=document.createElement('div');row.className='admrow';
+    var h=document.createElement('div');h.textContent=a.title||a.id;row.appendChild(h);
+    var sm=document.createElement('small');sm.textContent=(a.pl?('At '+Math.round(a.x)+', '+Math.round(a.z)+' · '+(a.on?'on':'off')):'Not placed yet')+' · '+a.views+' views · '+a.clicks+' clicks';row.appendChild(sm);
+    var bs=document.createElement('div');bs.className='bs';
+    function mk(t,f){var x=document.createElement('button');x.type='button';x.className='bb';x.textContent=t;x.addEventListener('click',f);bs.appendChild(x)}
+    mk(a.pl?'Move here':'Place here',function(){admPlace(a.id)});
+    if(a.pl){mk('Turn '+(a.on?'off':'on'),function(){admSend({id:a.id,on:!a.on})});mk('Delete',function(){if(confirm('Delete this billboard?'))admSend({id:a.id,del:1})})}
+    row.appendChild(bs);b.appendChild(row)
+  })
 }
 
 
