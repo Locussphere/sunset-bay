@@ -48,7 +48,8 @@ function cleanPiece(p) {
   if (!num(p.a, lim[0][0], lim[0][1]) || !num(p.b, lim[1][0], lim[1][1])) return null;
   if (!int(p.style, 0, 3)) return null;
   const sk = num(p.sk, 0, 4) ? p.sk : 0;
-  return { id: p.id, type: p.type, x: +p.x.toFixed(3), y: +p.y.toFixed(3), z: +p.z.toFixed(3), rot: +p.rot.toFixed(4), a: p.a, b: p.b, style: p.style, sk: +sk.toFixed(2) };
+  const pt = p.type === 'roof' ? (num(p.pt, 0.2, 1.6) ? +(+p.pt).toFixed(1) : 0.7) : undefined;
+  return { id: p.id, type: p.type, x: +p.x.toFixed(3), y: +p.y.toFixed(3), z: +p.z.toFixed(3), rot: +p.rot.toFixed(4), a: p.a, b: p.b, style: p.style, sk: +sk.toFixed(2), pt };
 }
 function cleanBlock(b) {
   if (!b || !int(b.i, -WORLD, WORLD) || !int(b.j, -WORLD, WORLD) || !int(b.k, -6, 60)) return null;
